@@ -98,7 +98,6 @@ import {
   AdminRoute,
   OwnerRoute,
   NotAuthRoute,
-  CustomerRoute,
 } from "./ProtectedRoute";
 import NotAuthLayout from "../layouts/NotAuthLayout.jsx";
 import CustomerLayout from "../layouts/CustomerLayout.jsx";

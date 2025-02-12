@@ -1,4 +1,4 @@
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 export const NotAuthRoute = ({ children }) => {
@@ -19,7 +19,7 @@ export const NotAuthRoute = ({ children }) => {
   return children;
 };
 export const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, role } = useSelector((state) => state.auth);
+  const { isAuthenticated } = useSelector((state) => state.auth);
   // const location = useLocation();
 
   // console.log("Auth Check:", {

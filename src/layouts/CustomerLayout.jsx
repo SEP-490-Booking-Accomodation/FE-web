@@ -1,14 +1,10 @@
 import { Outlet, useNavigate, useLocation, useParams } from "react-router-dom";
 import {
   BarChartOutlined,
-  CalendarOutlined,
   HomeOutlined,
-  TagOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu } from "antd";
-import Logo from "../assets/images/logo.png";
-import { BsBuildings } from "react-icons/bs";
 import HeaderSimple from "../components/layouts/header/HeaderSimple";
 
 const { Header, Content } = Layout;
