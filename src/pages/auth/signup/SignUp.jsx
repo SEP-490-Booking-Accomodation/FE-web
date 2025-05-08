@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { EyeInvisibleFilled, EyeFilled } from "@ant-design/icons";
+import { EyeInvisibleFilled, EyeFilled, CheckCircleFilled } from "@ant-design/icons";
 import { message } from "antd";
 import ImageCarousel from "../../../components/ImageCarousel/ImageCarousel";
 import styles from "./Signup.module.scss";
@@ -22,6 +22,13 @@ const Signup = () => {
   });
   const navigate = useNavigate();
   const [createUser, { isLoading }] = useCreateUserMutation();
+  const [passwordStrength, setPasswordStrength] = useState({
+    hasMinLength: false,
+    hasUpperCase: false,
+    hasLowerCase: false,
+    hasSpecialChar: false,
+    level: "weak"
+  });
 
   const validateEmail = (email) =>
     /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
@@ -37,8 +44,41 @@ const Signup = () => {
     );
   };
 
+  const calculatePasswordStrength = (password) => {
+    const hasMinLength = password.length >= 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    const strength = [hasMinLength, hasUpperCase, hasLowerCase, hasSpecialChar].filter(Boolean).length;
+    let level = "weak";
+    if (strength <= 1) level = "weak";
+    else if (strength <= 3) level = "medium";
+    else level = "strong";
+
+    setPasswordStrength({
+      hasMinLength,
+      hasUpperCase,
+      hasLowerCase,
+      hasSpecialChar,
+      level
+    });
+  };
+
+  const validatePassword = (password) => {
+    return passwordStrength.hasMinLength && 
+           passwordStrength.hasUpperCase && 
+           passwordStrength.hasLowerCase && 
+           passwordStrength.hasSpecialChar;
+  };
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    
+    if (name === "password") {
+      calculatePasswordStrength(value);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -49,6 +89,8 @@ const Signup = () => {
       return message.error("Số điện thoại phải có 10 số!");
     if (!validateAge(formData.doB))
       return message.error("Bạn phải từ 18 tuổi trở lên!");
+    if (!validatePassword(formData.password))
+      return message.error("Mật khẩu phải có ít nhất 8 ký tự, 1 chữ hoa, 1 chữ thường và 1 ký tự đặc biệt!");
     if (formData.password !== formData.confirmPassword)
       return message.error("Mật khẩu nhập lại không khớp!");
     if (!acceptTerms)
@@ -159,6 +201,29 @@ const Signup = () => {
                     <EyeFilled className={styles.passwordIcon} />
                   )}
                 </button>
+              </div>
+              <div className={styles.passwordStrengthContainer}>
+                <div className={styles.strengthBar}>
+                  <div className={`${styles.strengthFill} ${styles[passwordStrength.level]}`} />
+                </div>
+                <ul className={styles.requirementsList}>
+                  <li className={styles.requirementItem}>
+                    <CheckCircleFilled className={`${styles.checkIcon} ${passwordStrength.hasMinLength ? styles.valid : styles.invalid}`} />
+                    Ít nhất 8 ký tự
+                  </li>
+                  <li className={styles.requirementItem}>
+                    <CheckCircleFilled className={`${styles.checkIcon} ${passwordStrength.hasUpperCase ? styles.valid : styles.invalid}`} />
+                    Ít nhất 1 chữ hoa
+                  </li>
+                  <li className={styles.requirementItem}>
+                    <CheckCircleFilled className={`${styles.checkIcon} ${passwordStrength.hasLowerCase ? styles.valid : styles.invalid}`} />
+                    Ít nhất 1 chữ thường
+                  </li>
+                  <li className={styles.requirementItem}>
+                    <CheckCircleFilled className={`${styles.checkIcon} ${passwordStrength.hasSpecialChar ? styles.valid : styles.invalid}`} />
+                    Ít nhất 1 ký tự đặc biệt
+                  </li>
+                </ul>
               </div>
             </div>
             <div className={styles.formGroup}>

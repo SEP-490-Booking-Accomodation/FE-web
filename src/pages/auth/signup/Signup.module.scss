@@ -114,6 +114,67 @@ input[type="number"] {
     }
 }
 
+.passwordStrengthContainer {
+    margin-top: 8px;
+    margin-bottom: 16px;
+
+    .strengthBar {
+        height: 4px;
+        background-color: #e0e0e0;
+        border-radius: 2px;
+        margin-bottom: 8px;
+        overflow: hidden;
+
+        .strengthFill {
+            height: 100%;
+            transition: all 0.3s ease;
+            width: 0%;
+
+            &.weak {
+                width: 33.33%;
+                background-color: #ff4d4f;
+            }
+
+            &.medium {
+                width: 66.66%;
+                background-color: #faad14;
+            }
+
+            &.strong {
+                width: 100%;
+                background-color: #52c41a;
+            }
+        }
+    }
+
+    .requirementsList {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        .requirementItem {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            color: rgba(0, 0, 0, 0.65);
+            margin-bottom: 4px;
+
+            .checkIcon {
+                margin-right: 8px;
+                font-size: 14px;
+                
+                &.valid {
+                    color: #52c41a;
+                }
+
+                &.invalid {
+                    color: #d9d9d9;
+                }
+            }
+        }
+    }
+}
+
 .forgotPassword {
     display: block;
     text-align: right;
