@@ -30,6 +30,7 @@ export default function CardListBooking({ stageLevel, bookingList, listBookingTy
     }
   }
 
+
   // Filter bookings based on stageLevel
   const getFilteredBookings = () => {
     if (!filterDataBooking || filterDataBooking.length === 0) {
@@ -62,6 +63,8 @@ export default function CardListBooking({ stageLevel, bookingList, listBookingTy
     roomNo: booking.accommodationId?.roomNo || "N/A",
     guestName: booking.customerId?.userId?.fullName || "Unknown Guest",
     status: getStatusString(booking.status),
+    phone : booking.customerId?.userId?.phone,
+    email : booking.customerId?.userId?.email,
   }))
 
   return (

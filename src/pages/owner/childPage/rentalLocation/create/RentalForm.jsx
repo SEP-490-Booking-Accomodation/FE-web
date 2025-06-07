@@ -329,48 +329,62 @@ export default function RentalForm({ ownerId, refetch }) {
     latitude,
   } = locationData;
 
+  const cardStyle = {
+    borderRadius: "8px",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+    marginBottom: "24px"
+  };
+
+  const formItemStyle = {
+    marginBottom: "16px"
+  };
+
   return (
     <Form form={form} layout="vertical" onFinish={handleSubmit}>
-      <Flex gap={20} align="center" justify="space-between">
-        <h2 style={{ marginBottom: "20px" }}>Tạo địa điểm mới</h2>
-        <Form.Item style={{ textAlign: "center", marginTop: "20px" }}>
-          <Button
-            type="primary"
-            htmlType="submit"
-            icon={<SaveOutlined />}
-            loading={isLoading}
-            style={{ width: "150px" }}
-          >
-            {isLoading ? "Đang lưu..." : "Lưu"}
-          </Button>
-        </Form.Item>
+      <Flex gap={20} align="center" justify="space-between" style={formItemStyle}>
+        <Button
+          type="primary"
+          htmlType="submit"
+          icon={<SaveOutlined />}
+          loading={isLoading}
+          size="large"
+          style={{ minWidth: "150px", marginLeft: "auto" }}
+        >
+          {isLoading ? "Đang lưu..." : "Lưu"}
+        </Button>
       </Flex>
 
       {/* Thông tin cơ bản */}
-      <Card title="Thông tin địa điểm cho thuê" bordered={false}>
-        <Row>
+      <Card title={<span style={{ fontSize: "18px", fontWeight: "600" }}>Thông tin địa điểm cho thuê</span>} 
+            bordered={false} 
+            style={cardStyle}
+      >
+        <Row gutter={[24, 24]}>
           <Col xs={24} sm={24} md={12}>
-            <Row className={styles.formCreateContainer}>
+            <Row>
               <Col span={24}>
                 <Form.Item
                   name="rentalName"
-                  label="Tên địa điểm"
+                  label={<span style={{ fontWeight: "500" }}>Tên địa điểm</span>}
                   rules={[
                     { required: true, message: "Vui lòng nhập tên địa điểm!" },
                   ]}
+                  style={formItemStyle}
                 >
-                  <Input placeholder="Nhập tên địa điểm" />
+                  <Input placeholder="Nhập tên địa điểm" size="large" />
                 </Form.Item>
               </Col>
               <Col span={24}>
                 <Form.Item
                   name="description"
-                  label="Mô tả"
+                  label={<span style={{ fontWeight: "500" }}>Mô tả</span>}
                   rules={[{ required: true, message: "Vui lòng nhập mô tả!" }]}
+                  style={formItemStyle}
                 >
                   <TextArea
                     rows={4}
                     placeholder="Nhập mô tả chi tiết về địa điểm"
+                    size="large"
                   />
                 </Form.Item>
               </Col>
@@ -379,20 +393,22 @@ export default function RentalForm({ ownerId, refetch }) {
 
           {/* Thông tin địa chỉ và thời gian */}
           <Col xs={24} sm={24} md={12}>
-            <Row className={styles.formCreateContainer}>
+            <Row gutter={[16, 16]}>
               {/* Địa chỉ */}
-              <Col xs={24} sm={24} md={12} className={styles.inputFormCreate}>
+              <Col xs={24} sm={24} md={12}>
                 <Form.Item
                   name="province"
-                  label="Tỉnh/Thành phố"
+                  label={<span style={{ fontWeight: "500" }}>Tỉnh/Thành phố</span>}
                   rules={[
                     { required: true, message: "Vui lòng chọn tỉnh/thành!" },
                   ]}
+                  style={formItemStyle}
                 >
                   <Select
                     placeholder="Chọn tỉnh/thành"
                     onChange={handleProvinceChange}
                     showSearch
+                    size="large"
                     filterOption={(input, option) =>
                       option.children
                         .toLowerCase()
@@ -403,19 +419,21 @@ export default function RentalForm({ ownerId, refetch }) {
                   </Select>
                 </Form.Item>
               </Col>
-              <Col xs={24} sm={24} md={12} className={styles.inputFormCreate}>
+              <Col xs={24} sm={24} md={12}>
                 <Form.Item
                   name="district"
-                  label="Quận/Huyện"
+                  label={<span style={{ fontWeight: "500" }}>Quận/Huyện</span>}
                   rules={[
                     { required: true, message: "Vui lòng chọn quận/huyện!" },
                   ]}
+                  style={formItemStyle}
                 >
                   <Select
                     placeholder="Chọn quận/huyện"
                     onChange={handleDistrictChange}
                     disabled={!selectedProvince}
                     showSearch
+                    size="large"
                     filterOption={(input, option) =>
                       option.children
                         .toLowerCase()
@@ -426,18 +444,20 @@ export default function RentalForm({ ownerId, refetch }) {
                   </Select>
                 </Form.Item>
               </Col>
-              <Col xs={24} sm={24} md={12} className={styles.inputFormCreate}>
+              <Col xs={24} sm={24} md={12}>
                 <Form.Item
                   name="ward"
-                  label="Phường/Xã"
+                  label={<span style={{ fontWeight: "500" }}>Phường/Xã</span>}
                   rules={[
                     { required: true, message: "Vui lòng chọn phường/xã!" },
                   ]}
+                  style={formItemStyle}
                 >
                   <Select
                     placeholder="Chọn phường/xã"
                     disabled={!selectedDistrict}
                     showSearch
+                    size="large"
                     filterOption={(input, option) =>
                       option.children
                         .toLowerCase()
@@ -448,55 +468,61 @@ export default function RentalForm({ ownerId, refetch }) {
                   </Select>
                 </Form.Item>
               </Col>
-              <Col xs={24} sm={24} md={12} className={styles.inputFormCreate}>
+              <Col xs={24} sm={24} md={12}>
                 <Form.Item
                   name="address"
-                  label="Địa chỉ chi tiết"
+                  label={<span style={{ fontWeight: "500" }}>Địa chỉ chi tiết</span>}
                   rules={[
                     { required: true, message: "Vui lòng nhập địa chỉ!" },
                   ]}
+                  style={formItemStyle}
                 >
                   <Flex align="center" gap={8}>
-                    <Input placeholder="Nhập số nhà, đường, khu vực" />
+                    <Input placeholder="Nhập số nhà, đường, khu vực" size="large" />
                     <Button
                       type="primary"
                       icon={<EnvironmentOutlined />}
                       onClick={handleAddressBlur}
                       title="Kiểm tra địa chỉ"
+                      size="large"
                     />
                   </Flex>
                 </Form.Item>
               </Col>
 
               {/* Thời gian hoạt động */}
-              <Col xs={24} sm={24} md={12} className={styles.inputFormCreate}>
+              <Col xs={24} sm={24} md={12}>
                 <Form.Item
                   name="openHour"
-                  label="Giờ mở cửa"
+                  label={<span style={{ fontWeight: "500" }}>Giờ mở cửa</span>}
                   rules={[
                     { required: true, message: "Vui lòng chọn giờ mở cửa!" },
                   ]}
+                  style={formItemStyle}
                 >
                   <TimePicker
                     format="HH:mm"
                     style={{ width: "100%" }}
                     disabled={isOverNight}
+                    size="large"
                   />
                 </Form.Item>
               </Col>
 
-              <Col xs={24} sm={24} md={12} className={styles.inputFormCreate}>
+              <Col xs={24} sm={24} md={12}>
                 <Form.Item
                   name="closeHour"
-                  label="Giờ đóng cửa"
+                  label={<span style={{ fontWeight: "500" }}>Giờ đóng cửa</span>}
                   rules={[
                     { required: true, message: "Vui lòng chọn giờ đóng cửa!" },
                   ]}
+                  style={formItemStyle}
                 >
                   <TimePicker
                     format="HH:mm"
                     style={{ width: "100%" }}
                     disabled={isOverNight}
+                    size="large"
                   />
                 </Form.Item>
               </Col>
@@ -517,32 +543,34 @@ export default function RentalForm({ ownerId, refetch }) {
       </Card>
 
       {/* Hiển thị bản đồ và thông tin tọa độ */}
-      <Card title="Thông tin tọa độ" bordered={false} style={{ marginTop: 20 }}>
-        <Row gutter={16} align="middle">
+      <Card 
+        title={<span style={{ fontSize: "18px", fontWeight: "600" }}>Thông tin tọa độ</span>} 
+        bordered={false} 
+        style={cardStyle}
+      >
+        <Row gutter={[24, 24]} align="middle">
           <Col md={24} xs={24}>
-            <Flex vertical gap={12}>
+            <Flex vertical gap={16}>
               <Button
                 type="primary"
                 onClick={handleAddressBlur}
                 icon={<EnvironmentOutlined />}
+                size="large"
               >
                 Xác nhận tọa độ từ địa chỉ
               </Button>
 
-              <div>
-                <p>
+              <div style={{ background: "#f5f5f5", padding: "16px", borderRadius: "8px" }}>
+                <p style={{ marginBottom: "8px" }}>
                   <strong>Địa chỉ đầy đủ:</strong> {getFullAddress()}
                 </p>
                 {longitude && latitude && (
                   <Flex gap={16}>
                     <p>
-                      Tọa độ: ({longitude} ,{latitude})
-                      <strong>
-                        {" "}
-                        Nếu địa chỉ trên bản đồ có sai với dự đón, vui lòng kiểm
-                        tra kỹ thông tin trên google map để nhập chính xác thông
-                        tin
-                      </strong>
+                      <strong>Tọa độ:</strong> ({longitude}, {latitude})
+                      <span style={{ color: "#ff4d4f", marginLeft: "8px" }}>
+                        Nếu địa chỉ trên bản đồ có sai với dự đoán, vui lòng kiểm tra kỹ thông tin trên google map
+                      </span>
                     </p>
                   </Flex>
                 )}
@@ -560,7 +588,7 @@ export default function RentalForm({ ownerId, refetch }) {
                   alignItems: "center",
                   justifyContent: "center",
                   backgroundColor: "#f5f5f5",
-                  borderRadius: 8,
+                  borderRadius: "8px",
                 }}
               >
                 <p>Vui lòng xác nhận địa chỉ để hiển thị bản đồ</p>
@@ -572,9 +600,9 @@ export default function RentalForm({ ownerId, refetch }) {
 
       {/* Hình ảnh */}
       <Card
-        title="Hình ảnh địa điểm"
+        title={<span style={{ fontSize: "18px", fontWeight: "600" }}>Hình ảnh địa điểm</span>}
         bordered={false}
-        style={{ marginTop: 20 }}
+        style={cardStyle}
       >
         <Form.Item
           rules={[
@@ -592,26 +620,6 @@ export default function RentalForm({ ownerId, refetch }) {
         >
           <ImageUpload fileList={fileList} setFileList={setFileList} />
         </Form.Item>
-
-        {/* {fileList.length > 0 && (
-          <div style={{ marginTop: "20px" }}>
-            <h4>Hình ảnh đã tải lên ({fileList.length})</h4>
-            <Row gutter={[16, 16]}>
-              {fileList.map((file, index) => (
-                <Col key={index} xs={24} sm={12} md={8} lg={6}>
-                  <Image
-                    width="100%"
-                    height={200}
-                    style={{ objectFit: "cover" }}
-                    src={file.url}
-                    alt={`Hình ảnh ${index + 1}`}
-                    preview
-                  />
-                </Col>
-              ))}
-            </Row>
-          </div>
-        )} */}
       </Card>
     </Form>
   );

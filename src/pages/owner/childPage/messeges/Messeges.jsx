@@ -356,8 +356,10 @@ export default function Messages() {
         { event: "INSERT", schema: "public", table: "messages" },
         (payload) => {
           console.log("New message received:", payload);
-          // Always fetch messages for the current chat when a new message arrives
-          if (selectedChat && payload.new.chat_id === selectedChat.id) {
+          // Only fetch messages if the new message is not from the current user
+          if (selectedChat && 
+              payload.new.chat_id === selectedChat.id && 
+              payload.new.user_id !== chatInfo.id) {
             fetchMessages(selectedChat.id);
           }
         }

@@ -254,8 +254,11 @@ export default function ListBooking({
 
       case "newest":
       default:
-        // Sort by creation date (newest first)
-        sortedData.sort((a, b) => new Date(b._originalBooking.createdAt) - new Date(a._originalBooking.createdAt))
+        sortedData.sort((a, b) => {
+          const dateA = dayjs(a._originalBooking.checkInHour, "DD/MM/YYYY HH:mm:ss")
+          const dateB = dayjs(b._originalBooking.checkInHour, "DD/MM/YYYY HH:mm:ss")
+          return dateB.valueOf() - dateA.valueOf()
+        })
         break
     }
 

@@ -48,13 +48,19 @@ export default function BankInfo({ bankData, refetch }) {
 
   const hasBankInfo = bankData && bankData.bankName;
 
-  if (!hasBankInfo) {
+  if (!hasBankInfo && canEdit) {
     return (
       <NotHaveBank
         ownerId={bankData?.ownerId}
         createBank={createBank}
         refetch={refetch}
       />
+    );
+  } else if (!hasBankInfo) {
+    return (
+      <div>
+        <p>Chưa có thông tin ngân hàng</p>
+      </div>
     );
   }
 

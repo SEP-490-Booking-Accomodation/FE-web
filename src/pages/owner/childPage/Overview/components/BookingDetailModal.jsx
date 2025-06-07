@@ -68,7 +68,7 @@ export default function BookingDetailModal({ isVisible, onClose, bookingData }) 
 
   // If no booking data, return null
   if (!bookingData) return null
-
+  console.log(bookingData)
   const statusInfo = getStatusInfo(bookingData.status)
 
   return (

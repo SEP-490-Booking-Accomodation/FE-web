@@ -10,7 +10,7 @@
 }
 .contentContainer {
   background-color: #f6f8fa;
-  padding: 40px;
+  padding: 24px;
   border-radius: 16px;
   margin: 16px;
 
@@ -94,10 +94,10 @@
   }
   
   .sectionTitle {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 600;
-    color: #1a1f36;
-    margin: 16px 0;
+    color: #1e293b;
+    margin-bottom: 24px;
   }
   
   .chartContainer {
@@ -240,9 +240,14 @@
 
 .chartList {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 24px;
   margin-bottom: 24px;
+}
+
+.pieChartContainer {
+  width: 100%;
+  margin-top: 24px;
 }
 
 .chartItem {

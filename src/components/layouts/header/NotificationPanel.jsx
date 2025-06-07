@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Button, Typography, Spin } from "antd";
+import { Button, Typography, Spin, Badge } from "antd";
 import { BellOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import { Flex } from "antd";
 import dayjs from "dayjs";
@@ -61,7 +61,8 @@ export default function NotificationPanel({ onClose }) {
   const hasMore = displayCount < notifications.length;
 
   const handleLoadMore = () => {
-    setDisplayCount((prev) => prev + ITEMS_PER_PAGE);
+    onClose();
+    navigate("/notification");
   };
 
   useEffect(() => {
@@ -134,17 +135,19 @@ export default function NotificationPanel({ onClose }) {
             height: "80vh",
             width: "400px",
             backgroundColor: "#fff",
-            boxShadow: "0 0 15px rgba(0, 0, 0, 0.2)",
+            boxShadow: "0 2px 20px rgba(0, 0, 0, 0.15)",
+            borderRadius: "12px",
             zIndex: 9999,
-            padding: 10,
+            padding: "16px",
+            border: "1px solid #e8e8e8"
           }}
         >
           <div
             className={styleScroll.scrollContainer}
-            style={{ height: "100%", background: "#fff", padding: 10 }}
+            style={{ height: "100%", background: "#fff", padding: "0 8px" }}
           >
-            <Flex justify="space-between" style={{ marginBottom: 2 }}>
-              <Title level={4} style={{ margin: 0 }}>
+            <Flex justify="space-between" align="center" style={{ marginBottom: 16 }}>
+              <Title level={4} style={{ margin: 0, color: "#1a1a1a" }}>
                 Thông báo
               </Title>
               <Button
@@ -152,26 +155,38 @@ export default function NotificationPanel({ onClose }) {
                 onClick={handleViewAllNotifications}
                 style={{
                   fontWeight: "500",
-                  textDecoration: "underline",
-                  color: "#666",
+                  color: "#1677ff",
+                  padding: 0
                 }}
               >
-                Tất cả
+                Xem tất cả
               </Button>
             </Flex>
-            <Flex gap={10} style={{ marginBottom: 10 }}>
+            <Flex gap={12} style={{ marginBottom: 16 }}>
               <Button
                 ref={el => filterButtonsRef.current[0] = el}
-                type={filter === "all" ? "primary" : "text"}
+                type={filter === "all" ? "primary" : "default"}
                 onClick={(e) => handleFilterClick("all", e)}
-                style={{ borderRadius: 10, border: "1px solid #999" }}
+                style={{ 
+                  borderRadius: 8,
+                  fontWeight: 500,
+                  transition: "all 0.3s ease",
+                  background: filter === "all" ? "#1677ff" : "#f5f5f5",
+                  border: "none"
+                }}
               >
                 Tất cả
               </Button>
               <Button
                 ref={el => filterButtonsRef.current[1] = el}
-                type={filter === "unread" ? "primary" : "text"}
-                style={{ borderRadius: 10, border: "1px solid #999" }}
+                type={filter === "unread" ? "primary" : "default"}
+                style={{ 
+                  borderRadius: 8,
+                  fontWeight: 500,
+                  transition: "all 0.3s ease",
+                  background: filter === "unread" ? "#1677ff" : "#f5f5f5",
+                  border: "none"
+                }}
                 onClick={(e) => handleFilterClick("unread", e)}
               >
                 Chưa đọc
@@ -184,84 +199,99 @@ export default function NotificationPanel({ onClose }) {
                   <div 
                     key={item._id} 
                     style={{ 
-                      padding: "10px 0px", 
+                      padding: "12px",
                       cursor: "pointer",
-                      borderBottom: "1px solid #f0f0f0",
-                      transition: "background-color 0.3s ease"
+                      borderRadius: "8px",
+                      marginBottom: "8px",
+                      border: "1px solid transparent",
+                      transition: "all 0.3s ease"
                     }}
                     onClick={() => handleNotificationClick(item._id)}
-                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#f5f5f5"}
-                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.backgroundColor = "#f5f5f5";
+                      e.currentTarget.style.borderColor = "#e8e8e8";
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.backgroundColor = "transparent";
+                      e.currentTarget.style.borderColor = "transparent";
+                    }}
                   >
-                    <Flex>
-                      <Flex align="center">
-                        <div style={{ marginRight: "10px" }}>
+                    <Flex align="start" gap={12}>
+                      <Badge dot={!item.isRead} offset={[-6, 6]}>
+                        <div style={{ 
+                          padding: "10px",
+                          background: item.isRead ? "#f0f0f0" : "#fff0f0",
+                          borderRadius: "50%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center"
+                        }}>
                           {item.isRead ? (
                             <CheckCircleOutlined
                               style={{
-                                color: "green",
+                                color: "#52c41a",
                                 fontSize: "20px",
-                                padding: 10,
-                                background: "#e3e3e3",
-                                borderRadius: 30,
                               }}
                             />
                           ) : (
                             <BellOutlined
                               style={{
-                                color: "red",
+                                color: "#ff4d4f",
                                 fontSize: "20px",
-                                padding: 10,
-                                background: "#e3e3e3",
-                                borderRadius: 30,
                               }}
                             />
                           )}
                         </div>
+                      </Badge>
 
-                        <div style={{ flex: 1 }}>
-                          <Flex align="center" justify="space-between">
-                            <Paragraph
-                              style={{ margin: 0, fontSize: "14px", fontWeight: 600 }}
-                            >
-                              {item.title}
-                            </Paragraph>
-                            <Paragraph style={{ color: "#888", fontSize: "12px" }}>
-                              {formatDate(item.createdAt)}
-                            </Paragraph>
-                          </Flex>
-                          <Paragraph
-                            style={{
+                      <div style={{ flex: 1 }}>
+                        <Flex align="center" justify="space-between" style={{ marginBottom: 4 }}>
+                          <Typography.Text
+                            strong
+                            style={{ 
                               fontSize: "14px",
-                              color: "#666",
-                              marginBottom: "0",
+                              color: !item.isRead ? "#1a1a1a" : "#595959"
                             }}
                           >
-                            {item.content.length > 50
-                              ? `${item.content.slice(0, 50)}...`
-                              : item.content}
-                          </Paragraph>
-                        </div>
-
-                        {!item.isRead && (
-                          <span
-                            style={{
-                              width: "10px",
-                              height: "10px",
-                              borderRadius: "50%",
-                              backgroundColor: "blue",
-                            }}
-                          />
-                        )}
-                      </Flex>
+                            {item.title}
+                          </Typography.Text>
+                          <Typography.Text style={{ 
+                            color: "#8c8c8c",
+                            fontSize: "12px",
+                            fontWeight: 500
+                          }}>
+                            {formatDate(item.createdAt)}
+                          </Typography.Text>
+                        </Flex>
+                        <Typography.Paragraph
+                          style={{
+                            fontSize: "14px",
+                            color: "#595959",
+                            marginBottom: 0,
+                            lineHeight: "1.5"
+                          }}
+                        >
+                          {item.content.length > 50
+                            ? `${item.content.slice(0, 50)}...`
+                            : item.content}
+                        </Typography.Paragraph>
+                      </div>
                     </Flex>
                   </div>
                 ))}
                 {hasMore && (
                   <Button
-                    type="link"
+                    type="default"
                     onClick={handleLoadMore}
-                    style={{ width: "100%", marginTop: 10 }}
+                    style={{ 
+                      width: "100%",
+                      marginTop: 16,
+                      borderRadius: 8,
+                      height: 40,
+                      fontWeight: 500,
+                      background: "#f5f5f5",
+                      border: "none"
+                    }}
                   >
                     Xem thêm
                   </Button>
@@ -269,10 +299,13 @@ export default function NotificationPanel({ onClose }) {
               </>
             ) : (
               <div style={{
-                padding: "40px 20px",
+                padding: "60px 20px",
                 textAlign: "center",
-                color: "#888",
-                fontSize: "14px"
+                color: "#8c8c8c",
+                fontSize: "14px",
+                background: "#fafafa",
+                borderRadius: 8,
+                marginTop: 20
               }}>
                 Không có thông báo nào
               </div>

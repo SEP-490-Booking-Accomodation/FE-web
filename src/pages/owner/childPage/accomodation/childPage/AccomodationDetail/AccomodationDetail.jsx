@@ -4,7 +4,8 @@ import styles from "./AccomodationDetail.module.scss";
 import Tag from "../../components/Tag";
 
 export default function AccommodationDetail(props) {
-  const { visible, onCancel, loading, accommodationData, onEdit } = props;
+  const { visible, onCancel, loading, accommodationData, onEdit, canEdit } =
+    props;
 
   // console.log("AccommodationDetail received data:", accommodationData);
 
@@ -231,16 +232,18 @@ export default function AccommodationDetail(props) {
         <Button key="back" onClick={onCancel}>
           Đóng
         </Button>,
-        <Button
-          key="edit"
-          onClick={handleEditNavigate}
-          style={{
-            backgroundColor: "#177EE3",
-            color: "#fff",
-          }}
-        >
-          Chỉnh sửa
-        </Button>,
+        canEdit && (
+          <Button
+            key="edit"
+            onClick={handleEditNavigate}
+            style={{
+              backgroundColor: "#177EE3",
+              color: "#fff",
+            }}
+          >
+            Chỉnh sửa
+          </Button>
+        ),
       ]}
     >
       {modalContent}

@@ -137,11 +137,17 @@ export default function Overview() {
 
   const filterDataBooking =
     bookingDetail?.filter((booking) => {
-      const isFuture = parseDate(booking.checkInHour) > new Date();
+      const checkInDate = parseDate(booking.checkInHour);
+      const checkOutDate = parseDate(booking.checkOutHour);
+      const now = new Date();
+      
+      // Show if booking is current or future
+      const isCurrentOrFuture = checkInDate <= now && checkOutDate >= now || checkInDate > now;
+      
       const matchLocation =
         selectedRentalLocation === "all" ||
         booking.accommodationId?.rentalLocationId?._id === selectedRentalLocation;
-      return isFuture && matchLocation;
+      return isCurrentOrFuture && matchLocation;
     }) || [];
 
   // Calculate statistics

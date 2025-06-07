@@ -1,6 +1,9 @@
-import { Upload, Button, message, Spin } from "antd";
+import { Upload, Button, message, Spin, Card, Typography } from "antd";
 import { useState, useEffect } from "react";
 import { supabase } from "../../../../../redux/services/supabase";
+import { FilePdfOutlined, UploadOutlined } from "@ant-design/icons";
+
+const { Text } = Typography;
 
 export default function PDFUpload({ setPdfFile }) {
   const [uploading, setUploading] = useState(false);
@@ -29,6 +32,7 @@ export default function PDFUpload({ setPdfFile }) {
     name: "file",
     accept: ".pdf",
     maxCount: 1,
+    showUploadList: true,
     beforeUpload: (file) => {
       if (file.type !== "application/pdf") {
         message.error("Chỉ cho phép tải lên file PDF!");
@@ -88,10 +92,28 @@ export default function PDFUpload({ setPdfFile }) {
   };
 
   return (
-    <Spin spinning={uploading} tip="Đang tải file lên...">
-      <Upload {...uploadProps}>
-        <Button>Tải lên PDF</Button>
-      </Upload>
-    </Spin>
+    <Card style={{ borderRadius: "8px", boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}>
+      <Spin spinning={uploading} tip="Đang tải file lên...">
+        <div style={{ textAlign: "center", padding: "24px" }}>
+          <FilePdfOutlined style={{ fontSize: "48px", color: "#1890ff", marginBottom: "16px" }} />
+          <Text style={{ display: "block", marginBottom: "16px" }}>
+            Tải lên file PDF giấy tờ pháp lý
+          </Text>
+          <Upload {...uploadProps} style={{ width: "100%" }}>
+            <Button 
+              type="primary" 
+              icon={<UploadOutlined />}
+              size="large"
+              style={{ minWidth: "200px" }}
+            >
+              Chọn File PDF
+            </Button>
+          </Upload>
+          <Text type="secondary" style={{ display: "block", marginTop: "16px", fontSize: "12px" }}>
+            Chỉ chấp nhận file PDF, dung lượng tối đa 10MB
+          </Text>
+        </div>
+      </Spin>
+    </Card>
   );
 }

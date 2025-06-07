@@ -2,12 +2,15 @@ import { useEffect } from "react";
 import { Modal, Typography, Divider, Button, Spin, Tag, Badge } from "antd";
 import dayjs from "dayjs";
 import { useUpdateNotificationMutation } from "../../redux/services/notificationApi";
-
+import { useNavigate, useParams } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
 const NotificationDetailModal = ({ visible, notification, onClose, loading, onUpdate  }) => {
   const [updateNotification] = useUpdateNotificationMutation();
+  const navigate = useNavigate();
+  const { id } = useParams(); 
+  const userId = localStorage.getItem("user_id"); 
 
   useEffect(() => {
     const markAsRead = async () => {
@@ -36,6 +39,33 @@ const NotificationDetailModal = ({ visible, notification, onClose, loading, onUp
     }
   };
 
+  const handleNavigate = () => {
+    if (!notification) return;
+
+    onClose();
+
+    const ownerId = id || userId;
+    if (!ownerId) {
+      console.error("Owner ID not found");
+      return;
+    }
+
+    switch (notification.type) {
+      case 6:
+        navigate(`/owner/${ownerId}/chat`);
+        break;
+      case 1:
+      case 2:
+      case 3:
+      case 4:
+      case 5:
+        navigate(`/owner/${ownerId}/booking`);
+        break;
+      default:
+        break;
+    }
+  };
+
   if (!visible) return null;
 
   return (
@@ -44,7 +74,10 @@ const NotificationDetailModal = ({ visible, notification, onClose, loading, onUp
       visible={visible}
       onCancel={onClose}
       footer={[
-        <Button key="close" type="primary" onClick={onClose}>
+        <Button key="navigate" type="primary" onClick={handleNavigate} style={{ marginRight: 8 }}>
+          {notification?.type === 6 ? 'Đi đến tin nhắn' : 'Đi đến đặt phòng'}
+        </Button>,
+        <Button key="close" onClick={onClose}>
           Đóng
         </Button>,
       ]}

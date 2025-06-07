@@ -118,58 +118,89 @@ export default function Dashboard() {
   };
 
   const processBookingStatus = (bookings) => {
-    // console.log("[processBookingStatus] Input bookings count:", bookings?.length)
     if (!bookings || bookings.length === 0) {
       return { total: 0, data: [] };
     }
-    const statusCounts = { complete: 0, cancel: 0, pending: 0 };
+
+    const statusCounts = {
+      CONFIRMED: 0,
+      NEEDCHECKIN: 0,
+      CHECKEDIN: 0,
+      NEEDCHECKOUT: 0,
+      CHECKEDOUT: 0,
+      CANCELLED: 0,
+      COMPLETED: 0,
+      PENDING: 0,
+      REFUND: 0
+    };
+
     bookings.forEach((booking) => {
-      let isComplete = false;
-      if (
-        booking.paymentStatus === 3 ||
-        booking.paymentStatus === 4 ||
-        (booking.completedDate &&
-          moment(
-            booking.completedDate.$date || booking.completedDate
-          ).isValid())
-      ) {
-        isComplete = true;
-        statusCounts.complete++;
-      } else if (booking.isCancel) {
-        statusCounts.cancel++;
-      } else {
-        statusCounts.pending++;
+      switch (booking.status) {
+        case 1:
+          statusCounts.CONFIRMED++;
+          break;
+        case 2:
+          statusCounts.NEEDCHECKIN++;
+          break;
+        case 3:
+          statusCounts.CHECKEDIN++;
+          break;
+        case 4:
+          statusCounts.NEEDCHECKOUT++;
+          break;
+        case 5:
+          statusCounts.CHECKEDOUT++;
+          break;
+        case 6:
+          statusCounts.CANCELLED++;
+          break;
+        case 7:
+          statusCounts.COMPLETED++;
+          break;
+        case 8:
+          statusCounts.PENDING++;
+          break;
+        case 9:
+          statusCounts.REFUND++;
+          break;
+        default:
+          console.warn(`Unknown booking status: ${booking.status}`);
       }
     });
+
     const data = [
-      { name: "Hoàn thành", value: statusCounts.complete, color: "#14b8a6" },
-      { name: "Đã hủy", value: statusCounts.cancel, color: "#ef4444" },
-      { name: "Chờ/Khác", value: statusCounts.pending, color: "#f59e0b" },
+      { name: "Đã xác nhận", value: statusCounts.CONFIRMED, color: "#1D4ED8" }, // Blue
+      { name: "Cần check-in", value: statusCounts.NEEDCHECKIN, color: "#059669" }, // Green
+      { name: "Đã hủy", value: statusCounts.CANCELLED, color: "#DC2626" }, // Red
+      { name: "Hoàn thành", value: statusCounts.COMPLETED, color: "#16A34A" }, // Success Green
+      { name: "Chờ xử lý", value: statusCounts.PENDING, color: "#F59E0B" }, // Warning Yellow
+      { name: "Hoàn tiền", value: statusCounts.REFUND, color: "#B91C1C" }, // Dark Red
     ];
+
+    const total = Object.values(statusCounts).reduce((sum, count) => sum + count, 0);
+
     const result = {
-      total: bookings.length,
-      data: data.filter((item) => item.value > 0),
+      total,
+      data: data
+        .filter((item) => item.value > 0)
+        .map(item => ({
+          ...item,
+          percentage: ((item.value / total) * 100).toFixed(1),
+          name: `${item.name}: ${item.value} (${((item.value / total) * 100).toFixed(1)}%)`
+        }))
     };
-    // console.log("[processBookingStatus] Output:", result)
+
     return result;
   };
 
   const processBookingsByMonth = (bookings) => {
-    console.log(
-      "[processBookingsByMonth] Input bookings count:",
-      bookings?.length
-    );
     if (!bookings || bookings.length === 0) {
       return [];
     }
     const monthlyBookings = {};
     bookings.forEach((booking, index) => {
-      // Extract the date string, assuming it might be in booking.createdAt directly
-      // or nested if it were an object like { $date: "..." }
       const dateString = booking.createdAt?.$date || booking.createdAt;
-
-      // IMPORTANT: Provide the format string to moment
-      const date = moment(dateString, "DD/MM/YYYY HH:mm:ss", true); // Added format and strict parsing
+      const date = moment(dateString, "DD/MM/YYYY HH:mm:ss", true);
 
       if (date.isValid()) {
         const monthKey = date.format("MM/YY");
@@ -187,7 +218,6 @@ export default function Dashboard() {
           monthlyBookings[monthKey].revenue += booking.totalPrice || 0;
         }
       } else {
-        // Fallback: if strict parsing "DD/MM/YYYY HH:mm:ss" fails, try if it's an ISO string
         const isoDate = moment(dateString);
         if (isoDate.isValid()) {
           const monthKey = isoDate.format("MM/YY");
@@ -206,17 +236,14 @@ export default function Dashboard() {
           }
         } else {
           console.warn(
-            `[processBookingsByMonth] Invalid date for booking ${index} (tried DD/MM/YYYY HH:mm:ss and ISO):`,
+            `[processBookingsByMonth] Invalid date for booking ${index}:`,
             dateString,
             booking
           );
         }
       }
     });
-    console.log(
-      "[processBookingsByMonth] Aggregated Data (before Object.values):",
-      monthlyBookings
-    );
+
     const result = Object.values(monthlyBookings)
       .sort(
         (a, b) =>
@@ -224,7 +251,7 @@ export default function Dashboard() {
           moment(b.fullMonth, "MM/YYYY").valueOf()
       )
       .slice(-6);
-    console.log("[processBookingsByMonth] Output (last 6 months):", result);
+
     return result;
   };
 
@@ -324,6 +351,8 @@ export default function Dashboard() {
           />
           <MonthlyBookingsChart data={monthlyData} />
           <MonthlyRevenueChart data={monthlyData} />
+        </div>
+        <div className={styles.pieChartContainer}>
           <BookingStatusPieChart
             data={bookingStats.data}
             total={bookingStats.total}
