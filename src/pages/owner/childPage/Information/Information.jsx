@@ -1,11 +1,11 @@
-import { useParams } from "react-router-dom"
-import { Skeleton, Row, Col, message } from "antd"
-import { useState, useEffect } from "react"
-import AccountInfo from "./Components/AccountInfo/AccountInfo"
-import AccountStatus from "./Components/AccountStatus/AccountStatus"
-import CompanyInfo from "./Components/CompanyInfo/CompanyInfo"
-import styles from "./Information.module.scss"
-import { notification } from "antd"
+import { useParams } from "react-router-dom";
+import { Skeleton, Row, Col, message } from "antd";
+import { useState, useEffect } from "react";
+import AccountInfo from "./Components/AccountInfo/AccountInfo";
+import AccountStatus from "./Components/AccountStatus/AccountStatus";
+import CompanyInfo from "./Components/CompanyInfo/CompanyInfo";
+import styles from "./Information.module.scss";
+import { notification } from "antd";
 
 import {
   useGetOwnerDetailByUserIdQuery,
@@ -139,6 +139,8 @@ export default function Information() {
         message.warning("Cập nhật thông tin thành công nhưng không thể cập nhật username trong chat!");
       }
 
+
+
       // Update local state after successful API call
       setUserInfo((prev) => ({
         ...prev,
@@ -194,8 +196,8 @@ export default function Information() {
               initialData={userInfo}
               onUpdate={handleUpdateUserInfo}
             />
-            <Card style={{boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)"}}>
-              <BankInfo refetch={refreshOwner} bankData={bankInfo} />,
+            <Card style={{ boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)" }}>
+              <BankInfo refetch={refreshOwner} bankData={bankInfo} />
             </Card>
           </div>
         </Col>

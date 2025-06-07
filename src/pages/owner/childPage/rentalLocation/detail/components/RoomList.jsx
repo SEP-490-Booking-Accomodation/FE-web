@@ -15,19 +15,19 @@ import AccomodationEdit from "../../../accomodation/childPage/AccomodationEdit/A
 import AccommodationDetail from "../../../accomodation/childPage/AccomodationDetail/AccomodationDetail";
 import styles from "./RoomList.module.scss";
 
-export default function RoomList(canEdit) {
-  const { id: rentalLocationId } = useParams()
-  const [searchText, setSearchText] = useState("")
-  const [filterStatus, setFilterStatus] = useState("all")
-  const [selectedRoomType, setSelectedRoomType] = useState("all")
-  const [createModalVisible, setCreateModalVisible] = useState(false)
-  const [detailModalVisible, setDetailModalVisible] = useState(false)
-  const [updateModalVisible, setUpdateModalVisible] = useState(false)
-  const [selectedAccommodationId, setSelectedAccommodationId] = useState(null)
-  const [accommodationData, setAccommodationData] = useState(null)
-  const [roomTypes, setRoomTypes] = useState([])
-  const [isReloading, setIsReloading] = useState(false)
-  const [existingRoomNumbers, setExistingRoomNumbers] = useState([])
+export default function RoomList({ canEdit }) {
+  const { id: rentalLocationId } = useParams();
+  const [searchText, setSearchText] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [selectedRoomType, setSelectedRoomType] = useState("all");
+  const [createModalVisible, setCreateModalVisible] = useState(false);
+  const [detailModalVisible, setDetailModalVisible] = useState(false);
+  const [updateModalVisible, setUpdateModalVisible] = useState(false);
+  const [selectedAccommodationId, setSelectedAccommodationId] = useState(null);
+  const [accommodationData, setAccommodationData] = useState(null);
+  const [roomTypes, setRoomTypes] = useState([]);
+  const [isReloading, setIsReloading] = useState(false);
+  const [existingRoomNumbers, setExistingRoomNumbers] = useState([]);
 
   const {
     data: accommodations,
@@ -52,9 +52,11 @@ export default function RoomList(canEdit) {
 
   useEffect(() => {
     if (accommodations) {
-      const uniqueRoomTypes = new Map()
-      const roomNumbers = accommodations.map(accommodation => accommodation.roomNo)
-      setExistingRoomNumbers(roomNumbers)
+      const uniqueRoomTypes = new Map();
+      const roomNumbers = accommodations.map(
+        (accommodation) => accommodation.roomNo
+      );
+      setExistingRoomNumbers(roomNumbers);
 
       accommodations.forEach((accommodation) => {
         if (accommodation.accommodationTypeId) {
@@ -253,6 +255,7 @@ export default function RoomList(canEdit) {
       />
 
       <AccommodationDetail
+        canEdit={canEdit}
         visible={detailModalVisible}
         onCancel={() => setDetailModalVisible(false)}
         loading={isLoadingDetail}

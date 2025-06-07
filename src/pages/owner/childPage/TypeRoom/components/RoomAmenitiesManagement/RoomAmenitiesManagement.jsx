@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react";
 import { Table, Button, Input, Dropdown, message } from "antd";
-import { MoreOutlined, PlusOutlined, FilterOutlined, ReloadOutlined } from "@ant-design/icons";
+import {
+  MoreOutlined,
+  PlusOutlined,
+  FilterOutlined,
+  ReloadOutlined,
+} from "@ant-design/icons";
 import styles from "./RoomAmenitiesManagement.module.scss";
 import DeleteAmenityModal from "./components/DeleteAmenityModal/DeleteAmenityModal.jsx";
 import AddAmenityModal from "./components/AddAmenityModal/AddAmenityModal.jsx";
@@ -29,8 +34,7 @@ const RoomAmenitiesManagement = ({ isOwner }) => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-  const [isReloading, setIsReloading] = useState(false)
-
+  const [isReloading, setIsReloading] = useState(false);
 
   const { data: ownerDetailData, isLoading: isOwnerDetailLoading } =
     useGetOwnerDetailByUserIdQuery(id);
@@ -53,23 +57,27 @@ const RoomAmenitiesManagement = ({ isOwner }) => {
         setIsDetailModalOpen(true);
       },
     },
-    {
-      key: "2",
-      label: "Chỉnh sửa",
-      onClick: (record) => {
-        setSelectedAmenity(record);
-        setIsUpdateModalOpen(true);
-      },
-    },
-    {
-      key: "3",
-      label: "Xoá",
-      danger: true,
-      onClick: (record) => {
-        setSelectedAmenity(record);
-        setIsDeleteModalOpen(true);
-      },
-    },
+    ...(isOwner
+      ? [
+          {
+            key: "2",
+            label: "Chỉnh sửa",
+            onClick: (record) => {
+              setSelectedAmenity(record);
+              setIsUpdateModalOpen(true);
+            },
+          },
+          {
+            key: "3",
+            label: "Xoá",
+            danger: true,
+            onClick: (record) => {
+              setSelectedAmenity(record);
+              setIsDeleteModalOpen(true);
+            },
+          },
+        ]
+      : []),
   ];
 
   const handleFilterChange = (filterType, value) => {
@@ -230,8 +238,9 @@ const RoomAmenitiesManagement = ({ isOwner }) => {
         const isActive = status === "Active";
         return (
           <span
-            className={`${styles.status} ${isActive ? styles.active : styles.inactive
-              }`}
+            className={`${styles.status} ${
+              isActive ? styles.active : styles.inactive
+            }`}
           >
             {isActive ? "Đang hoạt động" : "Không hoạt động"}
           </span>
@@ -258,8 +267,6 @@ const RoomAmenitiesManagement = ({ isOwner }) => {
   ];
 
   const isLoading = isAmenitiesLoading || isOwnerDetailLoading;
-
-
 
   return (
     <div className={styles.contentContainer}>

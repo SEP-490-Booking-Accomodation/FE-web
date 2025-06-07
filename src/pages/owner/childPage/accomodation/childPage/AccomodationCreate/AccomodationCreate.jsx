@@ -11,15 +11,20 @@ import {
   Radio,
   Space,
   Tooltip,
-  Alert
+  Alert,
 } from "antd";
-import { SaveOutlined, InfoCircleOutlined, PlusOutlined, QuestionCircleOutlined } from "@ant-design/icons";
+import {
+  SaveOutlined,
+  InfoCircleOutlined,
+  PlusOutlined,
+  QuestionCircleOutlined,
+} from "@ant-design/icons";
 import TextArea from "antd/es/input/TextArea";
 import { useLocation } from "react-router-dom";
 import ImageUpload from "../../../rentalLocation/create/ImageUpload";
 import {
   useCreateAccommodationMutation,
-  useGetAccommodationsByRentalLocationQuery
+  useGetAccommodationsByRentalLocationQuery,
 } from "../../../../../../redux/services/accommodationApi";
 import { useGetAllAccommodationTypesQuery } from "../../../../../../redux/services/accommodationTypeApi";
 import styles from "./AccomodationCreate.module.scss";
@@ -31,7 +36,12 @@ import { useParams } from "react-router-dom";
 const { Title, Text } = Typography;
 const { Option } = Select;
 
-export default function AccommodationCreate({ visible, onCancel, onSuccess, existingRoomNumbers = [] }) {
+export default function AccommodationCreate({
+  visible,
+  onCancel,
+  onSuccess,
+  existingRoomNumbers = [],
+}) {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [isAddTypeModalOpen, setIsAddTypeModalOpen] = useState(false);
@@ -44,12 +54,15 @@ export default function AccommodationCreate({ visible, onCancel, onSuccess, exis
 
   const location = useLocation();
   const pathnameParts = location.pathname.split("/");
-  const rentalLocationId = pathnameParts[pathnameParts.indexOf("rental-location") + 1];
+  const rentalLocationId =
+    pathnameParts[pathnameParts.indexOf("rental-location") + 1];
 
   const [createAccommodation, { isLoading }] = useCreateAccommodationMutation();
   const [createAccommodationType] = useCreateAccommodationTypeMutation();
-  const { data: accommodationTypes, refetch: accommodationTypesRefetch } = useGetAllAccommodationTypesQuery(rentalLocationId);
-  const { data: existingAccommodations } = useGetAccommodationsByRentalLocationQuery(rentalLocationId);
+  const { data: accommodationTypes, refetch: accommodationTypesRefetch } =
+    useGetAllAccommodationTypesQuery(rentalLocationId);
+  const { data: existingAccommodations } =
+    useGetAccommodationsByRentalLocationQuery(rentalLocationId);
   const { data: ownerDetailData } = useGetOwnerDetailByUserIdQuery(id);
 
   const ownerId = ownerDetailData?.id;
@@ -76,7 +89,7 @@ export default function AccommodationCreate({ visible, onCancel, onSuccess, exis
   }, [form.getFieldValue("roomNo"), createMode, existingRoomNumbers]);
 
   const padRoomNumber = (num, length = 3) => {
-    return String(num).padStart(length, '0');
+    return String(num).padStart(length, "0");
   };
 
   const handleSaveAction = async (values) => {
@@ -96,18 +109,21 @@ export default function AccommodationCreate({ visible, onCancel, onSuccess, exis
           roomNo: values.roomNo,
           description: values.description || "",
           image: fileList.length > 0 ? fileList[0].url : "",
-          status: 1
+          status: 1,
         };
 
         await createAccommodation(accommodationData).unwrap();
         message.success({
           content: "Tạo phòng thành công!",
-          style: { marginTop: '20px' },
+          style: { marginTop: "20px" },
         });
       } else {
         const start = parseInt(values.startRoom, 10);
         const end = parseInt(values.endRoom, 10);
-        const roomLength = Math.max(values.startRoom.length, values.endRoom.length);
+        const roomLength = Math.max(
+          values.startRoom.length,
+          values.endRoom.length
+        );
 
         // Validate các điều kiện đầu vào
         if (isNaN(start) || isNaN(end)) {
@@ -134,7 +150,8 @@ export default function AccommodationCreate({ visible, onCancel, onSuccess, exis
         // Tạo mảng các phòng cần tạo và lọc trùng
         const accommodations = [];
         const filteredOut = [];
-        const [actualStart, actualEnd] = start < end ? [start, end] : [end, start];
+        const [actualStart, actualEnd] =
+          start < end ? [start, end] : [end, start];
 
         // Tạo Set các phòng đã tồn tại để tối ưu tốc độ kiểm tra
         const existingRoomsSet = new Set(existingRoomNumbers);
@@ -152,7 +169,7 @@ export default function AccommodationCreate({ visible, onCancel, onSuccess, exis
               roomNo: paddedNumber,
               description: values.description || "",
               image: fileList.length > 0 ? fileList[0].url : "",
-              status: 1
+              status: 1,
             });
           }
         }
@@ -171,19 +188,19 @@ export default function AccommodationCreate({ visible, onCancel, onSuccess, exis
           if (filteredOut.length > 0) {
             message.success({
               content: `Đã tạo thành công ${accommodations.length} phòng! ${filteredOut.length} phòng đã bị bỏ qua do trùng lặp.`,
-              style: { marginTop: '20px' },
+              style: { marginTop: "20px" },
             });
           } else {
             message.success({
               content: `Đã tạo thành công ${accommodations.length} phòng!`,
-              style: { marginTop: '20px' },
+              style: { marginTop: "20px" },
             });
           }
         } catch (error) {
           console.error("Error creating accommodation:", error);
           message.error({
             content: "Có lỗi xảy ra khi tạo phòng!",
-            style: { marginTop: '20px' },
+            style: { marginTop: "20px" },
           });
         }
       }
@@ -198,7 +215,7 @@ export default function AccommodationCreate({ visible, onCancel, onSuccess, exis
       console.error("Error creating accommodation:", error);
       message.error({
         content: "Có lỗi xảy ra khi tạo phòng!",
-        style: { marginTop: '20px' },
+        style: { marginTop: "20px" },
       });
     } finally {
       setIsCreating(false);
@@ -224,7 +241,7 @@ export default function AccommodationCreate({ visible, onCancel, onSuccess, exis
   };
 
   const formatPrice = (price) => {
-    return price?.toLocaleString('vi-VN') || 0;
+    return price?.toLocaleString("vi-VN") || 0;
   };
 
   const checkRoomRangeDuplicates = () => {
@@ -251,7 +268,13 @@ export default function AccommodationCreate({ visible, onCancel, onSuccess, exis
 
     if (duplicates.length > 0) {
       setFilteredOutRooms(duplicates);
-      setDuplicateWarning(`${duplicates.length} phòng trong dải này đã tồn tại và sẽ bị bỏ qua: ${duplicates.slice(0, 5).join(', ')}${duplicates.length > 5 ? '...' : ''}`);
+      setDuplicateWarning(
+        `${
+          duplicates.length
+        } phòng trong dải này đã tồn tại và sẽ bị bỏ qua: ${duplicates
+          .slice(0, 5)
+          .join(", ")}${duplicates.length > 5 ? "..." : ""}`
+      );
     } else {
       setFilteredOutRooms([]);
       setDuplicateWarning(null);
@@ -261,13 +284,17 @@ export default function AccommodationCreate({ visible, onCancel, onSuccess, exis
   return (
     <>
       <Modal
-        title={<Title level={4} className={styles.modalTitle}>Tạo thông tin phòng</Title>}
+        title={
+          <Title level={4} className={styles.modalTitle}>
+            Tạo thông tin phòng
+          </Title>
+        }
         open={visible}
         onCancel={onCancel}
         width={800}
         footer={null}
         destroyOnClose
-        bodyStyle={{ padding: '20px' }}
+        bodyStyle={{ padding: "20px" }}
       >
         <Divider className={styles.modalDivider} />
 
@@ -313,23 +340,23 @@ export default function AccommodationCreate({ visible, onCancel, onSuccess, exis
               <Select
                 placeholder="Chọn loại phòng"
                 size="large"
-                style={{ width: '100%' }}
+                style={{ width: "100%" }}
                 optionLabelProp="label"
-                dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
                 open={selectOpen}
                 onDropdownVisibleChange={(open) => setSelectOpen(open)}
                 dropdownRender={(menu) => (
                   <>
                     {menu}
-                    <Divider style={{ margin: '4px 0' }} />
+                    <Divider style={{ margin: "4px 0" }} />
                     <div
                       style={{
-                        padding: '8px',
-                        cursor: 'pointer',
-                        color: '#1890ff',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px'
+                        padding: "8px",
+                        cursor: "pointer",
+                        color: "#1890ff",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
                       }}
                       onClick={() => {
                         setSelectOpen(false);
@@ -342,23 +369,22 @@ export default function AccommodationCreate({ visible, onCancel, onSuccess, exis
                   </>
                 )}
               >
-                {accommodationTypes?.data?.map(type => (
-                  <Option
-                    key={type._id}
-                    value={type._id}
-                    label={type.name}
-                  >
+                {accommodationTypes?.data?.map((type) => (
+                  <Option key={type._id} value={type._id} label={type.name}>
                     <div className={styles.optionContent}>
                       <div className={styles.optionHeader}>
                         <span className={styles.typeName}>{type.name}</span>
                         <span className={styles.prices}>
-                          Base Price: {formatPrice(type.basePrice)}đ - Overtime Hourly Price: {formatPrice(type.overtimeHourlyPrice)}đ/giờ
+                          Base Price: {formatPrice(type.basePrice)}đ - Overtime
+                          Hourly Price: {formatPrice(type.overtimeHourlyPrice)}
+                          đ/giờ
                         </span>
                       </div>
                       {type.serviceIds?.length > 0 && (
                         <div className={styles.services}>
                           <Text type="secondary">
-                            Dịch vụ: {type.serviceIds.map(s => s.name).join(', ')}
+                            Dịch vụ:{" "}
+                            {type.serviceIds.map((s) => s.name).join(", ")}
                           </Text>
                         </div>
                       )}
@@ -376,21 +402,25 @@ export default function AccommodationCreate({ visible, onCancel, onSuccess, exis
                   { required: true, message: "Vui lòng nhập số phòng!" },
                   {
                     pattern: /^\d+$/,
-                    message: "Chỉ được nhập số nguyên dương!"
+                    message: "Chỉ được nhập số nguyên dương!",
                   },
                   {
                     validator: (_, value) => {
                       // Kiểm tra số âm
                       if (value && parseInt(value) < 0) {
-                        return Promise.reject(new Error('Không được nhập số âm!'));
+                        return Promise.reject(
+                          new Error("Không được nhập số âm!")
+                        );
                       }
                       // Kiểm tra trùng lặp
                       if (existingRoomNumbers.includes(value)) {
-                        return Promise.reject(new Error('Số phòng này đã tồn tại!'));
+                        return Promise.reject(
+                          new Error("Số phòng này đã tồn tại!")
+                        );
                       }
                       return Promise.resolve();
-                    }
-                  }
+                    },
+                  },
                 ]}
               >
                 <Input
@@ -413,25 +443,36 @@ export default function AccommodationCreate({ visible, onCancel, onSuccess, exis
                   name="startRoom"
                   label={<Text strong>Từ số phòng</Text>}
                   rules={[
-                    { required: true, message: "Vui lòng nhập số phòng bắt đầu!" },
+                    {
+                      required: true,
+                      message: "Vui lòng nhập số phòng bắt đầu!",
+                    },
                     {
                       pattern: /^\d+$/,
-                      message: "Chỉ được nhập số nguyên dương!"
+                      message: "Chỉ được nhập số nguyên dương!",
                     },
                     {
                       validator: (_, value) => {
                         const numValue = parseInt(value, 10);
                         if (numValue < 0) {
-                          return Promise.reject(new Error('Không được nhập số âm!'));
+                          return Promise.reject(
+                            new Error("Không được nhập số âm!")
+                          );
                         }
                         if (numValue > 999) {
-                          return Promise.reject(new Error('Số phòng tối đa là 999!'));
+                          return Promise.reject(
+                            new Error("Số phòng tối đa là 999!")
+                          );
                         }
                         return Promise.resolve();
-                      }
-                    }
+                      },
+                    },
                   ]}
-                  style={{ display: 'inline-block', width: 'calc(50% - 12px)', marginRight: '24px' }}
+                  style={{
+                    display: "inline-block",
+                    width: "calc(50% - 12px)",
+                    marginRight: "24px",
+                  }}
                 >
                   <Input
                     placeholder="Vd: 001"
@@ -439,7 +480,7 @@ export default function AccommodationCreate({ visible, onCancel, onSuccess, exis
                     onBlur={(e) => {
                       const value = e.target.value;
                       if (value) {
-                        const padded = value.padStart(value.length, '0');
+                        const padded = value.padStart(value.length, "0");
                         form.setFieldsValue({ startRoom: padded });
                         checkRoomRangeDuplicates();
                       }
@@ -451,29 +492,40 @@ export default function AccommodationCreate({ visible, onCancel, onSuccess, exis
                   name="endRoom"
                   label={<Text strong>Đến số phòng</Text>}
                   rules={[
-                    { required: true, message: "Vui lòng nhập số phòng kết thúc!" },
+                    {
+                      required: true,
+                      message: "Vui lòng nhập số phòng kết thúc!",
+                    },
                     {
                       pattern: /^\d+$/,
-                      message: "Chỉ được nhập số nguyên dương!"
+                      message: "Chỉ được nhập số nguyên dương!",
                     },
                     {
                       validator: (_, value) => {
-                        const start = form.getFieldValue('startRoom');
+                        const start = form.getFieldValue("startRoom");
                         const numValue = parseInt(value, 10);
                         if (numValue < 0) {
-                          return Promise.reject(new Error('Không được nhập số âm!'));
+                          return Promise.reject(
+                            new Error("Không được nhập số âm!")
+                          );
                         }
                         if (numValue > 999) {
-                          return Promise.reject(new Error('Số phòng tối đa là 999!'));
+                          return Promise.reject(
+                            new Error("Số phòng tối đa là 999!")
+                          );
                         }
                         if (start && numValue === parseInt(start, 10)) {
-                          return Promise.reject(new Error('Số bắt đầu và kết thúc không được trùng nhau!'));
+                          return Promise.reject(
+                            new Error(
+                              "Số bắt đầu và kết thúc không được trùng nhau!"
+                            )
+                          );
                         }
                         return Promise.resolve();
-                      }
-                    }
+                      },
+                    },
                   ]}
-                  style={{ display: 'inline-block', width: 'calc(50% - 12px)' }}
+                  style={{ display: "inline-block", width: "calc(50% - 12px)" }}
                 >
                   <Input
                     placeholder="Vd: 010"
@@ -481,7 +533,7 @@ export default function AccommodationCreate({ visible, onCancel, onSuccess, exis
                     onBlur={(e) => {
                       const value = e.target.value;
                       if (value) {
-                        const padded = value.padStart(value.length, '0');
+                        const padded = value.padStart(value.length, "0");
                         form.setFieldsValue({ endRoom: padded });
                         checkRoomRangeDuplicates();
                       }
@@ -502,7 +554,7 @@ export default function AccommodationCreate({ visible, onCancel, onSuccess, exis
                   type="info"
                   showIcon
                   icon={<InfoCircleOutlined />}
-                  style={{ marginBottom: '16px', marginTop: '8px' }}
+                  style={{ marginBottom: "16px", marginTop: "8px" }}
                 />
               </div>
             )}
@@ -513,14 +565,11 @@ export default function AccommodationCreate({ visible, onCancel, onSuccess, exis
                 description={duplicateWarning}
                 type="warning"
                 showIcon
-                style={{ marginBottom: '16px' }}
+                style={{ marginBottom: "16px" }}
               />
             )}
 
-            <Form.Item
-              name="description"
-              label={<Text strong>Mô tả</Text>}
-            >
+            <Form.Item name="description" label={<Text strong>Mô tả</Text>}>
               <TextArea
                 rows={4}
                 placeholder="Tối đa 255 ký tự"
@@ -532,9 +581,7 @@ export default function AccommodationCreate({ visible, onCancel, onSuccess, exis
           </div>
 
           <div className={styles.imageUploadSection}>
-            <Form.Item
-              label={<Text strong>Hình ảnh phòng</Text>}
-            >
+            <Form.Item label={<Text strong>Hình ảnh phòng</Text>}>
               <ImageUpload fileList={fileList} setFileList={setFileList} />
               <Alert
                 message={
@@ -547,7 +594,7 @@ export default function AccommodationCreate({ visible, onCancel, onSuccess, exis
                 type="info"
                 showIcon
                 icon={<InfoCircleOutlined />}
-                style={{ marginTop: '8px' }}
+                style={{ marginTop: "8px" }}
               />
             </Form.Item>
           </div>

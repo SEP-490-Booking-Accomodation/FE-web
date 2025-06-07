@@ -1,6 +1,20 @@
 import { useState, useEffect } from "react";
-import { Table, Button, Input, Dropdown, message, Tooltip, Select, InputNumber } from "antd";
-import { MoreOutlined, PlusOutlined, FilterOutlined, ReloadOutlined } from "@ant-design/icons";
+import {
+  Table,
+  Button,
+  Input,
+  Dropdown,
+  message,
+  Tooltip,
+  Select,
+  InputNumber,
+} from "antd";
+import {
+  MoreOutlined,
+  PlusOutlined,
+  FilterOutlined,
+  ReloadOutlined,
+} from "@ant-design/icons";
 import styles from "./RoomTypeManagement.module.scss";
 import DeleteRoomTypeModal from "./components/DeleteRoomTypeModal/DeleteRoomTypeModal";
 import AddRoomTypeModal from "./components/AddRoomTypeModal/AddRoomTypeModal";
@@ -42,10 +56,10 @@ const RoomTypeManagement = ({ isOwner }) => {
 
   const getOwnerIdFromStorage = () => {
     try {
-      const storedOwnerId = localStorage.getItem('ownerId');
+      const storedOwnerId = localStorage.getItem("ownerId");
       return storedOwnerId;
     } catch (error) {
-      console.error('Error getting ownerId from localStorage:', error);
+      console.error("Error getting ownerId from localStorage:", error);
       return null;
     }
   };
@@ -54,16 +68,22 @@ const RoomTypeManagement = ({ isOwner }) => {
     useGetOwnerDetailByUserIdQuery(id);
   const ownerId = ownerDetailData?.id;
 
-  const { data: roomTypesData, isLoading: isRoomTypesLoading, refetch } =
-    useGetAccommodationTypesByOwnerQuery(ownerId, {
-      skip: !ownerId,
-    });
+  const {
+    data: roomTypesData,
+    isLoading: isRoomTypesLoading,
+    refetch,
+  } = useGetAccommodationTypesByOwnerQuery(ownerId, {
+    skip: !ownerId,
+  });
 
   const storageOwnerId = getOwnerIdFromStorage();
   const { data: servicesData, isLoading: isServicesLoading } =
-    useGetAllAmenitiesQuery({ ownerId: storageOwnerId }, {
-      skip: !storageOwnerId,
-    });
+    useGetAllAmenitiesQuery(
+      { ownerId: storageOwnerId },
+      {
+        skip: !storageOwnerId,
+      }
+    );
 
   const [createAccommodationType] = useCreateAccommodationTypeMutation();
   const [updateAccommodationType] = useUpdateAccommodationTypeMutation();
@@ -72,13 +92,13 @@ const RoomTypeManagement = ({ isOwner }) => {
   const roomTypes = Array.isArray(roomTypesData?.data)
     ? roomTypesData.data
     : Array.isArray(roomTypesData)
-      ? roomTypesData
-      : [];
+    ? roomTypesData
+    : [];
   const services = Array.isArray(servicesData?.data)
     ? servicesData.data
     : Array.isArray(servicesData)
-      ? servicesData
-      : [];
+    ? servicesData
+    : [];
 
   useEffect(() => {
     const fetchServiceNames = async () => {
@@ -118,12 +138,14 @@ const RoomTypeManagement = ({ isOwner }) => {
   const filterGroups = useMemo(() => {
     if (!roomTypes.length) return [];
 
-    const uniqueMaxPeople = [...new Set(roomTypes.map(room => room.maxPeopleNumber))]
-      .filter(num => num != null)
+    const uniqueMaxPeople = [
+      ...new Set(roomTypes.map((room) => room.maxPeopleNumber)),
+    ]
+      .filter((num) => num != null)
       .sort((a, b) => a - b)
-      .map(num => ({
+      .map((num) => ({
         label: `${num} người`,
-        value: num
+        value: num,
       }));
 
     return [
@@ -253,7 +275,10 @@ const RoomTypeManagement = ({ isOwner }) => {
       );
     }
 
-    if (selectedValues.priceRange.min !== null || selectedValues.priceRange.max !== null) {
+    if (
+      selectedValues.priceRange.min !== null ||
+      selectedValues.priceRange.max !== null
+    ) {
       filtered = filtered.filter((item) => {
         const price = item.basePrice;
         const min = selectedValues.priceRange.min;
@@ -273,10 +298,10 @@ const RoomTypeManagement = ({ isOwner }) => {
     if (selectedValues.serviceTypes.length > 0) {
       filtered = filtered.filter((item) => {
         if (item.serviceIds && Array.isArray(item.serviceIds)) {
-          const serviceIdsInRoom = item.serviceIds.map(service =>
-            typeof service === 'string' ? service : service._id
+          const serviceIdsInRoom = item.serviceIds.map((service) =>
+            typeof service === "string" ? service : service._id
           );
-          return selectedValues.serviceTypes.some(id =>
+          return selectedValues.serviceTypes.some((id) =>
             serviceIdsInRoom.includes(id)
           );
         } else if (item.serviceId) {
@@ -317,23 +342,27 @@ const RoomTypeManagement = ({ isOwner }) => {
         setIsDetailModalOpen(true);
       },
     },
-    {
-      key: "2",
-      label: "Chỉnh sửa",
-      onClick: (record) => {
-        setSelectedRoomType(record);
-        setIsUpdateModalOpen(true);
-      },
-    },
-    {
-      key: "3",
-      label: "Xoá",
-      danger: true,
-      onClick: (record) => {
-        setSelectedRoomType(record);
-        setIsDeleteModalOpen(true);
-      },
-    },
+    ...(isOwner
+      ? [
+          {
+            key: "2",
+            label: "Chỉnh sửa",
+            onClick: (record) => {
+              setSelectedRoomType(record);
+              setIsUpdateModalOpen(true);
+            },
+          },
+          {
+            key: "3",
+            label: "Xoá",
+            danger: true,
+            onClick: (record) => {
+              setSelectedRoomType(record);
+              setIsDeleteModalOpen(true);
+            },
+          },
+        ]
+      : []),
   ];
 
   const columns = [
