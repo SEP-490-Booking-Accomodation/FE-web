@@ -15,7 +15,9 @@ import { useGetOwnerLogsByOwnerIdQuery } from "../../../../redux/services/ownerL
 import {
   checkUserExistInSupabase,
   createOrGetUserProfile,
+  updateUserProfileInSupabase,
 } from "../../../../redux/services/supabase";
+import { useUpdateUserMutation } from "../../../../redux/services/userApi";
 import BankInfo from "../Setting/components/BankAccount/BankAccount";
 import { useMemo } from "react";
 import { Card } from "antd";
@@ -33,6 +35,7 @@ export default function Information() {
   // State
   const [userInfo, setUserInfo] = useState(null);
   const [companyInfo, setCompanyInfo] = useState(null);
+  const [updateUser] = useUpdateUserMutation();
 
   // Get logs (only when owner loaded)
   const ownerId = ownerDetail?._id;
@@ -124,13 +127,25 @@ export default function Information() {
           phone: updatedInfo.phone,
           avatarUrl: [updatedInfo.avatar]
         }
-      }).unwrap()
+      }).unwrap();
+
+      // Update username in Supabase
+      const supabaseResult = await updateUserProfileInSupabase(id, {
+        username: updatedInfo.fullName
+      });
+
+      if (!supabaseResult.success) {
+        console.error("Error updating Supabase profile:", supabaseResult.message);
+        message.warning("Cập nhật thông tin thành công nhưng không thể cập nhật username trong chat!");
+      }
 
       // Update local state after successful API call
       setUserInfo((prev) => ({
         ...prev,
         ...updatedInfo,
       }));
+
+      message.success("Cập nhật thông tin thành công!");
     } catch (error) {
       console.error("Error updating user info:", error);
       message.error("Có lỗi xảy ra khi cập nhật thông tin tài khoản!");

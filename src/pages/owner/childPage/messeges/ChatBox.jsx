@@ -26,19 +26,14 @@ export default function ChatBox({ selectedChat, messages, currentUserId }) {
   const formatParticipants = () => {
     const others = getOtherParticipants()
     if (others.length === 0) return "Chat"
-
-    if (others.length === 1) {
-      return others[0].username
-    }
-
-    return `${others[0].username} and ${others.length - 1} others`
+    return others[0].username || "Unknown User"
   }
 
   return (
     <div className={styles.chatBox}>
       <div className={styles.chatHeader}>
         <div className={styles.headerInfo}>
-          <span>{selectedChat?.name || formatParticipants()}</span>
+          <span>{formatParticipants()}</span>
           {getOtherParticipants().some((p) => p.is_online) && <span className={styles.onlineText}>• Online</span>}
         </div>
         <FaInfoCircle className={styles.infoIcon} />

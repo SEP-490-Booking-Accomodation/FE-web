@@ -138,3 +138,49 @@ export const createOrGetUserProfile = async (userData) => {
     }
   }
 }
+
+/**
+ * Updates a user's profile in Supabase
+ * @param {string} userId - The ID of the user to update
+ * @param {Object} updateData - The data to update
+ * @returns {Promise<Object>} Result of the operation
+ */
+export const updateUserProfileInSupabase = async (userId, updateData) => {
+  try {
+    if (!userId) {
+      return {
+        success: false,
+        message: "User ID is required",
+      };
+    }
+
+    const { data, error } = await supabase
+      .from("profiles")
+      .update(updateData)
+      .eq("iduserplatform", userId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Error updating user profile:", error);
+      return {
+        success: false,
+        message: `Error updating profile: ${error.message}`,
+        error,
+      };
+    }
+
+    return {
+      success: true,
+      message: "User profile updated successfully",
+      profile: data,
+    };
+  } catch (error) {
+    console.error("Error in updateUserProfileInSupabase:", error);
+    return {
+      success: false,
+      message: `An unexpected error occurred: ${error.message}`,
+      error,
+    };
+  }
+};

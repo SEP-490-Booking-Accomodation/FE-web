@@ -16,17 +16,18 @@ export default function ChatList({ chats, selectedChat, onSelectChat, currentUse
     } else {
       const filtered = chats.filter(
         (chat) =>
-          chat.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          chat.participants.some((p) => p.username.toLowerCase().includes(searchTerm.toLowerCase())),
+          chat.participants.some((p) => 
+            p.username?.toLowerCase().includes(searchTerm.toLowerCase())
+          )
       )
       setFilteredChats(filtered)
     }
   }, [searchTerm, chats])
 
-  // Function to get initials from name
-  const getInitials = (name) => {
-    if (!name) return "?"
-    return name
+  // Function to get initials from username
+  const getInitials = (username) => {
+    if (!username) return "?"
+    return username
       .split(" ")
       .map((word) => word[0])
       .join("")
@@ -38,6 +39,13 @@ export default function ChatList({ chats, selectedChat, onSelectChat, currentUse
   const getOtherParticipants = (chat) => {
     if (!chat.participants || !currentUserId) return []
     return chat.participants.filter((p) => p.id !== currentUserId)
+  }
+
+  // Function to get chat display name
+  const getChatDisplayName = (chat) => {
+    const others = getOtherParticipants(chat)
+    if (others.length === 0) return "Chat"
+    return others[0].username || "Unknown User"
   }
 
   return (
@@ -59,6 +67,7 @@ export default function ChatList({ chats, selectedChat, onSelectChat, currentUse
         filteredChats.map((chat) => {
           const otherParticipants = getOtherParticipants(chat)
           const isOnline = otherParticipants.some((p) => p.is_online)
+          const displayName = getChatDisplayName(chat)
 
           return (
             <div
@@ -66,16 +75,11 @@ export default function ChatList({ chats, selectedChat, onSelectChat, currentUse
               className={`${styles.chatItem} ${selectedChat && selectedChat.id === chat.id ? styles.activeChat : ""}`}
               onClick={() => onSelectChat(chat)}
             >
-              {chat.avatar ? (
-                <img src={chat.avatar || "/placeholder.svg"} alt={chat.name} className={styles.avatar} />
-              ) : (
-                <div className={styles.avatar}>{getInitials(chat.name)}</div>
-              )}
-
+              <div className={styles.avatar}>{getInitials(displayName)}</div>
               {isOnline && <div className={styles.onlineStatus}></div>}
 
               <div className={styles.chatInfo}>
-                <p className={styles.chatName}>{chat.name}</p>
+                <p className={styles.chatName}>{displayName}</p>
                 <p className={styles.chatLastMessage}>{chat.lastMessage || "Start a conversation"}</p>
               </div>
             </div>
